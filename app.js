@@ -31,6 +31,32 @@ app.use(methodoverride("_method"));
 app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
+//Middleware example
+// app.get("/api", (req, res, next) => {
+//   let { token } = req.query;
+//   if (token === "giveaccess") {
+//     next();
+//   }
+//   res.send("Error");
+// });
+
+// app.get("/api", (req, res) => {
+//   res.send("data");
+// });
+
+//I can use multiple functions as middlewares.
+const CheckToken = (req, res, next) => {
+  let { token } = req.query;
+  if (token === "giveaccess") {
+    next();
+  }
+  res.send("Error");
+};
+
+app.get("/api", CheckToken, (req, res) => {
+  res.send("data");
+}); //it executes the function first and then next middleware and i can use this function on any route
+
 //index route
 
 app.get("/listings", async (req, res) => {
