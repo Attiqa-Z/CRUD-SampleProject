@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 const methodoverride = require("method-override");
 const ejsMate = require("ejs-mate");
+const ExpressError = require("./ExpressError.js");
 
 app.get("/", (req, res) => {
   res.send("Hi I am Attiqa");
@@ -50,12 +51,21 @@ const CheckToken = (req, res, next) => {
   if (token === "giveaccess") {
     next();
   }
-  res.send("Error");
+  throw new ExpressError(401, "There is an Error");
 };
 
 app.get("/api", CheckToken, (req, res) => {
-  res.send("data");
+  res.send("There is no Error. You did it good.");
 }); //it executes the function first and then next middleware and i can use this function on any route
+
+app.use((err, req, res, next) => {
+  let { status, message } = err;
+  res.status(status).send(message);
+});
+
+app.get("/admin", (req, res) => {
+  throw new ExpressError(404, "Access to Admin is Forbidden");
+});
 
 //index route
 
@@ -130,19 +140,19 @@ app.delete("/listings/:id", async (req, res) => {
   res.redirect("/listings");
 });
 
-// app.get("/testlisting", async (req,res)=>{
-// let samplelisting=new Listing({
-//   title:"My home",
-//   description:"This is my home",
-//   image:"string",
-//   price:12000,
-//   location:"Karachi",
-//   country:"Pakistan",
-// });
-//  await samplelisting.save();
-//  console.log("sample is listed");
-//  res.send("success")
-// })
+app.get("/testlisting", async (req, res) => {
+  let samplelisting = new Listing({
+    title: "My home",
+    description: "This is my home",
+    image: "string",
+    price: 12000,
+    location: "Karachi",
+    country: "Pakistan",
+  });
+  await samplelisting.save();
+  console.log("sample is listed");
+  res.send("success");
+});
 
 app.listen(8000, () => {
   console.log("server is running on the port:8000");
