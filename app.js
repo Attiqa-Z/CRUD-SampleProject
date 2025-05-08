@@ -118,7 +118,7 @@ app.put("/listings/:id", async (req, res) => {
 
   // If the image input is empty, keep the old image
   if (!req.body.listing.image) {
-    req.body.listing.image = listing.image;
+    req.body.listing.image = listing.image.url;
   }
 
   await Listing.findByIdAndUpdate(id, { ...req.body.listing });
@@ -141,7 +141,7 @@ app.delete("/listings/:id", async (req, res) => {
 });
 
 app.get("/testlisting", async (req, res) => {
-  let samplelisting = new Listing({
+  let sampleListings = new Listing({
     title: "My home",
     description: "This is my home",
     image: "string",
@@ -149,7 +149,7 @@ app.get("/testlisting", async (req, res) => {
     location: "Karachi",
     country: "Pakistan",
   });
-  await samplelisting.save();
+  await sampleListings.save();
   console.log("sample is listed");
   res.send("success");
 });
